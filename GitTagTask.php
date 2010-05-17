@@ -17,12 +17,22 @@ class GitTagTask extends GitTask {
 	}
 
 	/**
+	 * Sets the path for the git repo to tag
+	 */
+	public function setPath($path) {
+		$this->_path = (string) $path;
+	}
+
+	/**
 	 * Main entry point.
 	 */
 	public function main() {
-		$cmd = $this->git_path . " tag " . $this->_tag_name;
+		$current = getcwd();
+		chdir($this->_path);
+		$cmd = $this->git_path . " tag " . escapeshellarg($this->_tag_name);
 		$this->log("Running " . $cmd);
 		passthru($cmd, $return);
+		chdir($current);
 		$this->log("Return: " . $return);
 	}
 }
