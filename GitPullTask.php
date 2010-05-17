@@ -12,6 +12,14 @@ class GitPullTask extends GitTask {
 	 * @var string
 	 */
 	private $_path = null;
+	/**
+	 * @todo add a param for public key identity file for remote ssh repos
+	private $_ssh_id_file = NULL;
+	 * @todo add a param for $remote
+	private $_remote = NULL;
+	 * @todo add a param for $branch
+	private $_branch = NULL;
+	 */
 
 	/**
 	 * Sets the target path for the cloned repository.
