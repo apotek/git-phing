@@ -11,14 +11,19 @@ class GitPullTask extends GitTask {
 	 * Path to cloned repository
 	 * @var string
 	 */
-	private $_path = null;
+	private $_path;
+	/** Optional remote for the pull
+	 * @var string
+	 */
+	private $_remote = '';
+	/** Optional branch for the pull
+	 * @var string
+	 */
+	private $_branch = '';
+
 	/**
 	 * @todo add a param for public key identity file for remote ssh repos
 	private $_ssh_id_file = NULL;
-	 * @todo add a param for $remote
-	private $_remote = NULL;
-	 * @todo add a param for $branch
-	private $_branch = NULL;
 	 */
 
 	/**
@@ -29,10 +34,23 @@ class GitPullTask extends GitTask {
 	}
 
 	/**
+	 * Sets the remote to pull from
+	 */
+	public function setRemote($remote) {
+		$this->_remote = $remote;
+	}
+
+	/**
+	 * Sets the remote branch to pull from 
+	 */
+	public function setBranch($branch) {
+		$this->_branch = $branch;
+	}
+
+	/**
 	 * Main entry point.
 	 */
 	public function main() {
-
 		if(false == isset($this->_path)) {
 			$this->log("GitPullTask Fail: PATH must be set!\n");
 			exit(1);
@@ -42,6 +60,12 @@ class GitPullTask extends GitTask {
 		chdir($this->_path);
 
 		$cmd = $this->git_path . ' pull';
+		if ($this->_remote) {
+			$cmd .= ' '. $this->_remote;
+			if ($this->_branch) {
+				$cmd .= ' '. $this->_branch;
+			}
+		}
 
 		$this->log("Running " . $cmd);
 		passthru($cmd, $return);

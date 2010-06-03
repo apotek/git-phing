@@ -7,20 +7,31 @@ require_once 'GitTask.php';
  * @author Zach Campbell <zacharydangercampbell@gmail.com>
  */
 class GitPushTask extends GitTask {
-	private $_remote;
-	private $_branch;
-	private $_path;
+	private $_remote = '';
+	private $_branch = '';
+	private $_path = '';
 
 	/**
 	 * Main entry point.
 	 */
 	public function main() {
-		$current = getcwd();
-		chdir($this->_path);
-		$command = $this->git_path . " push " . $this->_remote . " " . $this->_branch;
-		$this->log("Pushing: " . $command);
-		passthru($command, $return);
-		chdir($current);
+		if (!empty($this->_path)) {
+			$current = getcwd();
+			chdir($this->_path);
+		}
+		$cmd = $this->git_path .' push ';
+		if ($this->_remote) {
+			$cmd .= ' '. $this->_remote;
+			if ($this->_branch) {
+				$cmd .= ' '. $this->_branch;
+			}
+		}
+
+		$this->log("Pushing: " . $cmd);
+		passthru($cmd, $return);
+		if (isset($current)) {
+			chdir($current);
+		}
 		$this->log("Push Return: " . $return);
 	}
 

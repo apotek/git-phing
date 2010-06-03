@@ -13,7 +13,7 @@ class GitGcTask extends GitTask {
 	public function main() {
 		$command = $this->git_path . " gc";
 		passthru($command, $return);
-		$this->log("Cleaing up git repo: " . $return);
+		$this->log("Cleaning up git repo: " . $return);
 	}
 }
 ?>
