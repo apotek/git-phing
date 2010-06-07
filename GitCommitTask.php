@@ -9,7 +9,7 @@ require_once 'GitTask.php';
 class GitCommitTask extends GitTask {
 
 	/** @string $path: path to the local Git repository */
-	private $path = '.';
+	private $_path = '.';
   private $comment = '';
 	private $failOnError = TRUE;
   private $allModified = TRUE;
@@ -19,7 +19,7 @@ class GitCommitTask extends GitTask {
 	 */
 	public function main() {
 
-		if (empty($this->path)) {
+		if (empty($this->_path)) {
       throw new BuildException("You must set the 'path' property");
 		}
 		if (empty($this->comment)) {
@@ -27,13 +27,13 @@ class GitCommitTask extends GitTask {
 		}
 
 		$current = getcwd();
-		chdir($this->path);
+		chdir($this->_path);
 		$opts = '-m';
 		if ($this->allModified) {
 			$opts = '-a '. $opts;
 		}
 		$cmd = $this->git_path .' commit '. $opts .' '. escapeshellarg($this->comment);
-		$this->log("Running `$cmd` in directory {$this->path}");
+		$this->log("Running `$cmd` in directory {$this->_path}");
 		passthru($cmd, $return);
 		chdir($current);
 		/** 
@@ -51,7 +51,7 @@ class GitCommitTask extends GitTask {
 				$this->log('Nothing to commit.');
 				break;
 			case 128:
-				$this->handledError("{$this->path} does not contain a valid git repository. Commit failed.");
+				$this->handledError("{$this->_path} does not contain a valid git repository. Commit failed.");
 				break;
 			default:
 				$this->handledError('Unknown error during commit.');
@@ -71,7 +71,7 @@ class GitCommitTask extends GitTask {
 		if (!file_exists("$path/.git")) {
 			$this->handledError("No git repository found at '$path/.git'");
 		}
-		$this->path = $path;
+		$this->_path = $path;
 	}
 
     /** setter for comment property. Comments from between tags (addText) over-
