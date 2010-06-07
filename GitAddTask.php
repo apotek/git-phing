@@ -10,11 +10,11 @@ class GitAddTask extends GitTask {
 
 	/** @string $path path to the local Git repository */
 	private $path = '';
-    private $filelists = array();
-    private $fileListFiles = array();
-    private $filesets = array();
-    private $fileSetFiles = array();
-    private $failOnError = TRUE;
+	private $filelists = array();
+	private $fileListFiles = array();
+	private $filesets = array();
+	private $fileSetFiles = array();
+	private $failOnError = TRUE;
 
 	/**
 	 * Main entry point.
@@ -22,37 +22,39 @@ class GitAddTask extends GitTask {
 	public function main() {
 
 		if (empty($this->path)) {
-            throw new BuildException("You must set the 'path' property");
+			throw new BuildException("You must set the 'path' property");
 		}
 
-        $project = $this->getProject();
-        $srcFiles = array();
-        $srcDirs = array();
-
-        // process filelists
-        foreach($this->filelists as $fl) {
-            $fromDir  = $fl->getDir($project);
-            $srcFiles = $fl->getFiles($project);
-            $srcDirs  = array($fl->getDir($project));
-        }
-        
-        // process filesets
-        foreach($this->filesets as $fs) {
-            $ds = $fs->getDirectoryScanner($project);
-            $fromDir  = $fs->getDir($project);
-            $srcFiles = array_merge($srcFiles, $ds->getIncludedFiles());
-            $srcDirs  = array_merge($srcDirs, $ds->getIncludedDirectories());            
-        }
-
-        //get rid of duplicates
-        $srcDirs = array_unique($srcDirs);
-        $srcFiles = array_unique($srcFiles);
-
+		$project = $this->getProject();
+		$srcFiles = array();
+		$srcDirs = array();
+		
+		// process filelists
+		foreach($this->filelists as $fl) {
+		    $fromDir  = $fl->getDir($project);
+		    $srcFiles = $fl->getFiles($project);
+		    $srcDirs  = array($fl->getDir($project));
+		}
+		
+		// process filesets
+		foreach($this->filesets as $fs) {
+		    $ds = $fs->getDirectoryScanner($project);
+		var_dump($ds);
+		var_dump($ds->getIncludedDirectories());
+		    $fromDir  = $fs->getDir($project);
+		    $srcFiles = array_merge($srcFiles, $ds->getIncludedFiles());
+		    $srcDirs  = array_merge($srcDirs, $ds->getIncludedDirectories());            
+		}
+		
+		//get rid of duplicates
+		$srcDirs = array_unique($srcDirs);
+		$srcFiles = array_unique($srcFiles);
 		$current = getcwd();
 		chdir($this->path);
 		$cmd = $this->git_path .' add '. implode(' ', $srcDirs) . implode(' ', $srcFiles);
 		$this->log("Running `$cmd` in directory {$this->path}");
-		passthru($cmd, $return);
+		echo "Running `$cmd` in directory {$this->path}";
+//		passthru($cmd, $return);
 		chdir($current);
 		if ($return==0) {
 			$this->log('GitAdd: Files were added successfully');
