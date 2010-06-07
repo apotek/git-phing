@@ -10,9 +10,9 @@ class GitCommitTask extends GitTask {
 
 	/** @string $repository: path to the local Git repository */
 	private $repository = '.';
-    private $comment = '';
-    private $failOnError = TRUE;
-    private $allModified = TRUE;
+  private $comment = '';
+	private $failOnError = TRUE;
+  private $allModified = TRUE;
 
 	/**
 	 * Main entry point.
@@ -97,7 +97,7 @@ class GitCommitTask extends GitTask {
 	 */
 	private function handledError($errorMessage) {
 		if ($this->failOnError) {
-            throw new BuildException($errorMessage);
+      throw new BuildException($errorMessage);
 		} else {
 			$this->log($errorMessage);
 		}

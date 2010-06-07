@@ -26,6 +26,12 @@ class GitCheckoutTask extends GitTask {
 	private $_path = null;
 
 	/**
+	 * Should the build fail if there's an error?
+	 * @var bool
+	 */
+	private $failOnError = TRUE;
+
+	/**
 	 * Sets the name for the git tag.
 	 */
 	public function setTag($tag_name) {
@@ -52,13 +58,11 @@ class GitCheckoutTask extends GitTask {
 	public function main() {
 
 		if(false == isset($this->_path)) {
-			$this->log("GitCheckoutTask Fail: PATH must be set!\n");
-			exit(1);
+			$this->handledError("GitCheckoutTask Fail: PATH must be set!\n");
 		}
 
 		if(false == isset($this->_tag_name) and false == isset($this->_branch_name)) {
-			$this->log("GitCheckoutTask Fail: TAG or BRANCH must be set!\n");
-			exit(1);
+			$this->handledError("GitCheckoutTask Fail: TAG or BRANCH must be set!\n");
 		}
 
 		$which = null;
@@ -97,11 +101,30 @@ class GitCheckoutTask extends GitTask {
 		chdir($dir);
 
 		if(intval($return) > 0) {
-			if ( intval)
-			$this->log("Git Checkout Failed.");
-			exit(1);
+			if (intval)
+			$errmsg='Git Checkout Failed.';
+			$this->log($errmsg);
+			$this->handledError($errmsg);
 		}
 
+	}
+
+ /**
+	* Setter for failOnError property
+	*/	
+	public function setFailonerror($boolean) {
+		$this->failOnError = (bool) $boolean;
+	}
+
+	/**
+	 * Handle errors according to the failOnError setting
+	 */
+	private function handledError($errorMessage) {
+		if ($this->failOnError) {
+			throw new BuildException($errorMessage);
+		} else {
+			$this->log($errorMessage);
+		}
 	}
 
 }
