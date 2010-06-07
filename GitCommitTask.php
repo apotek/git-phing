@@ -8,8 +8,8 @@ require_once 'GitTask.php';
  */
 class GitCommitTask extends GitTask {
 
-	/** @string $repository: path to the local Git repository */
-	private $repository = '.';
+	/** @string $path: path to the local Git repository */
+	private $path = '.';
   private $comment = '';
 	private $failOnError = TRUE;
   private $allModified = TRUE;
@@ -19,21 +19,21 @@ class GitCommitTask extends GitTask {
 	 */
 	public function main() {
 
-		if (empty($this->repository)) {
-            throw new BuildException("You must set the 'repository' property");
+		if (empty($this->path)) {
+      throw new BuildException("You must set the 'path' property");
 		}
 		if (empty($this->comment)) {
-            throw new BuildException("You must set the commit 'comment' property, or add a comment within <gitcommit></gitcommit> tags.");
+      throw new BuildException("You must set the commit 'comment' property, or add a comment within <gitcommit></gitcommit> tags.");
 		}
 
 		$current = getcwd();
-		chdir($this->repository);
+		chdir($this->path);
 		$opts = '-m';
 		if ($this->allModified) {
 			$opts = '-a '. $opts;
 		}
 		$cmd = $this->git_path .' commit '. $opts .' '. escapeshellarg($this->comment);
-		$this->log("Running `$cmd` in directory {$this->repository}");
+		$this->log("Running `$cmd` in directory {$this->path}");
 		passthru($cmd, $return);
 		chdir($current);
 		/** 
@@ -51,7 +51,7 @@ class GitCommitTask extends GitTask {
 				$this->log('Nothing to commit.');
 				break;
 			case 128:
-				$this->handledError("{$this->repository} does not contain a valid git repository. Commit failed.");
+				$this->handledError("{$this->path} does not contain a valid git repository. Commit failed.");
 				break;
 			default:
 				$this->handledError('Unknown error during commit.');
@@ -62,16 +62,16 @@ class GitCommitTask extends GitTask {
 	
 	/**
 	 * Setter for dir property
-	 * This should be set to the root directory of the git repository you are working with
+	 * This should be set to the path to the git repository you are working with
 	 */
-	public function setRepository($path) {
+	public function setPath($path) {
 		if (!file_exists($path) || !is_dir($path)){
-            $this->handledError('The passed local git repository path is not a valid directory');
+      $this->handledError('The passed local git repository path is not a valid directory');
 		}
 		if (!file_exists("$path/.git")) {
 			$this->handledError("No git repository found at '$path/.git'");
 		}
-		$this->repository = $path;
+		$this->path = $path;
 	}
 
     /** setter for comment property. Comments from between tags (addText) over-
