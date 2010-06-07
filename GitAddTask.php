@@ -8,8 +8,8 @@ require_once 'GitTask.php';
  */
 class GitAddTask extends GitTask {
 
-	/** @string $dir path to the local Git repository */
-	private $repository = '';
+	/** @string $path path to the local Git repository */
+	private $path = '';
     private $filelists = array();
     private $fileListFiles = array();
     private $filesets = array();
@@ -21,8 +21,8 @@ class GitAddTask extends GitTask {
 	 */
 	public function main() {
 
-		if (empty($this->repository)) {
-            throw new BuildException("You must set the 'repository' property");
+		if (empty($this->path)) {
+            throw new BuildException("You must set the 'path' property");
 		}
 
         $project = $this->getProject();
@@ -49,9 +49,9 @@ class GitAddTask extends GitTask {
         $srcFiles = array_unique($srcFiles);
 
 		$current = getcwd();
-		chdir($this->repository);
+		chdir($this->path);
 		$cmd = $this->git_path .' add '. implode(' ', $srcDirs) . implode(' ', $srcFiles);
-		$this->log("Running `$cmd` in directory {$this->repository}");
+		$this->log("Running `$cmd` in directory {$this->path}");
 		passthru($cmd, $return);
 		chdir($current);
 		if ($return==0) {
@@ -86,14 +86,14 @@ class GitAddTask extends GitTask {
 	 * Setter for dir property
 	 * This should be set to the root directory of the git repository you are working with
 	 */
-	public function setRepository($path) {
+	public function setPath($path) {
 		if (!file_exists($path) || !is_dir($path)){
             $this->handledError('The passed local git repository path is not a valid directory');
 		}
 		if (!file_exists("$path/.git")) {
 			$this->handledError("No git repository found at '$path/.git'");
 		}
-		$this->repository = $path;
+		$this->path = $path;
 	}
 
 	/**
