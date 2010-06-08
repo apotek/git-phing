@@ -8,7 +8,7 @@ require_once 'GitTask.php';
  */
 class GitConfigTask extends GitTask {
 
-	/** @string $repository: path to the local Git repository */
+	/** @string $path: path to the local Git repository */
 	private $path = '';
 	private $property = '';
   private $value = '';
@@ -32,7 +32,7 @@ class GitConfigTask extends GitTask {
 		$current = getcwd();
 		chdir($this->path);
 		$cmd = $this->git_path .' config '. escapeshellarg($this->property) .' '. escapeshellarg($this->value);
-		$this->log("Running `$cmd` in directory {$this->repository}");
+		$this->log("Running `$cmd` in directory {$this->path}");
 		passthru($cmd, $return);
 		chdir($current);
 		/** 

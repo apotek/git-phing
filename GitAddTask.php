@@ -39,8 +39,6 @@ class GitAddTask extends GitTask {
 		// process filesets
 		foreach($this->filesets as $fs) {
 		    $ds = $fs->getDirectoryScanner($project);
-		var_dump($ds);
-		var_dump($ds->getIncludedDirectories());
 		    $fromDir  = $fs->getDir($project);
 		    $srcFiles = array_merge($srcFiles, $ds->getIncludedFiles());
 		    $srcDirs  = array_merge($srcDirs, $ds->getIncludedDirectories());            
