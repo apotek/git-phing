@@ -47,17 +47,17 @@ class GitAddTask extends GitTask {
 		//get rid of duplicates
 		$srcDirs = array_unique($srcDirs);
 		$srcFiles = array_unique($srcFiles);
+		$filecount = count($srcDirs) + count($srcFiles);
 		$current = getcwd();
 		chdir($this->path);
 		$cmd = $this->git_path .' add '. implode(' ', $srcDirs) . implode(' ', $srcFiles);
 		$this->log("Running `$cmd` in directory {$this->path}");
-		echo "Running `$cmd` in directory {$this->path}";
-//		passthru($cmd, $return);
+		passthru($cmd, $return);
 		chdir($current);
 		if ($return==0) {
-			$this->log('GitAdd: Files were added successfully');
+			$this->log("GitAdd: $filecount files were added successfully");
 		} else {
-			$this->handledError('GitAdd: Error adding the files.');
+			$this->handledError("GitAdd: Error adding $filecount files.");
 		}
 	}
 
