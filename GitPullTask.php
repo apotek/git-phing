@@ -21,6 +21,11 @@ class GitPullTask extends GitTask {
 	 */
 	private $_branch = '';
 
+	/** Optional place to add extra flags to the pull
+	 * @var string
+	 */
+	private $_options = '';
+
 	/**
 	 * @todo add a param for public key identity file for remote ssh repos
 	private $_ssh_id_file = NULL;
@@ -48,6 +53,19 @@ class GitPullTask extends GitTask {
 	}
 
 	/**
+	 * pass arguments to pull command
+	 */
+	public function setOptions($options) {
+    $opts = '';
+	  //escape shell args
+	  $args = preg_split("/\s+/", "$options");
+	  foreach($args as $arg) {
+	    $opts .= ' '. escapeshellarg($arg);
+	  }
+ 		$this->_options = $opts;
+	}
+
+	/**
 	 * Main entry point.
 	 */
 	public function main() {
@@ -67,7 +85,10 @@ class GitPullTask extends GitTask {
 			}
 		}
 
-		$this->log("Running " . $cmd);
+    if ($this->_options) {
+      $cmd .= $this->_options;
+    }
+		$this->log('Running '. $cmd);
 		passthru($cmd, $return);
 		$this->log("Return: " . $return);
 
